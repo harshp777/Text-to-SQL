@@ -1,0 +1,14 @@
+credentials:
+  usernames:
+    harsh:
+      email: hp@gmail.com
+      name: Harsh Pandya
+      password: $2b$12$jUVhnl61i1w14j13UKQmxu6.vclg/JZ2KdqsUSqcE5tdNOzmF8AaW #Password:abc123 # To be replaced with hashed password
+    
+cookie:
+  expiry_days: 7
+  key: random_signature_key # Must be string
+  name: random_cookie_name
+preauthorized:
+  emails:
+  # - melsby@gmail.com
