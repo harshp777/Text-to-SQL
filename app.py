@@ -6,6 +6,12 @@ import streamlit_authenticator as stauth
 import yaml 
 from yaml.loader import SafeLoader
 from dotenv import load_dotenv
+
+sys.path.append(os.path.abspath('src'))
+
+from src.utils import list_catalog_schema_tables
+
+
 load_dotenv()
 
 
@@ -36,10 +42,50 @@ authenticator = stauth.Authenticate(
 
 name, authentication_status, user_name = authenticator.login()
 
+
 if authentication_status:
     authenticator.logout('Logout','main')
     st.write(f"Welcome *{name}*!")
 
+    # Selecting the Catalog, Schema and Table in the Target Database
+    st.sidebar.image('artifacts/Databricks_Logo_2.png')
+    result_tables = list_catalog_schema_tables()
+    df_databricks = pd.DataFrame(result_tables).iloc[:,:4]
+    df_databricks.columns=["catalog","schema","table","table_type"]
+
+    # getting catalog to schema mapping for dynamically selecting only relevant schema for a given catalog
+    catalog_schema_mapping_df = df_databricks.groupby(["catalog"]).agg({'schema': lambda x: list(np.unique(x))}).reset_index()
+
+    # getting schema to table mapping for dynamically selecting only relevant tables for a given catalog and schema
+    schema_table_mapping_df = df_databricks.groupby(["schema"]).agg({'table': lambda x: list(np.unique(x))}).reset_index()
+
+    # Selecting the catalog
+    catalog = st.sidebar.selectbox("Select the catalog", options=df_databricks['catalog'].unique().tolist())
+
+    # Selecting the schema 
+    schema_candidate_list = catalog_schema_mapping_df[catalog_schema_mapping_df["catalog"]==catalog]["schema"].values[0]
+    schema_candidate_list = [val for val in schema_candidate_list if val != "dev_tools"]
+    schema = st.sidebar.selectbox("Select the schema", options=schema_candidate_list)
+
+    # Selecting the Tables
+    table_candidate_list = schema_table_mapping_df[schema_table_mapping_df["schema"]==schema]["table"].values[0]
+    table_list = st.sidebar.multiselect("Select the table", options= ["All"]+table_candidate_list)
+
+
+    if "All" in table_list:
+        table_list = table_candidate_list
+
 
 else:
     st.write(f"Please login to continue!")
+
+
+
+
+# next step is to create ERD diagrams from the mermaid code
+# Instruction based (give set of instructions)
+# Role based promiting (act as cutomer service)
+
+# Langchain - chaining, memory for conversation, Tools(connect to internet) , Data parsing 
+
+
