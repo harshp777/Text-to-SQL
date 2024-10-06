@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 
 sys.path.append(os.path.abspath('src'))
 
-from src.utils import list_catalog_schema_tables
+from src.utils import list_catalog_schema_tables, create_erd_diagram, process_llm_response_for_mermaid, mermaid
 
 
 load_dotenv()
@@ -76,13 +76,36 @@ if authentication_status:
         table_list = table_candidate_list
 
 
+    if st.sidebar.checkbox(":orange[Proceed]"):        
+        with st.expander(":red[View the ERD Diagram]"):
+            response = create_erd_diagram(catalog,schema,table_list)
+            if st.button("Regenerate"):
+                # Creating the ERD Diagram
+                create_erd_diagram.clear()
+                response = create_erd_diagram(catalog,schema,table_list)
+                mermaid_code = process_llm_response_for_mermaid(response)
+                mermaid(mermaid_code)
+            else:
+                mermaid_code = process_llm_response_for_mermaid(response)
+                mermaid(mermaid_code)
+
+        
+            
+
+
 else:
     st.write(f"Please login to continue!")
 
 
 
 
-# next step is to create ERD diagrams from the mermaid code
+# --> next step is to make sure we have all the context for the llm to work on 
+# --> generate the query
+# --> can have an extra add on query to the previous one (more in depth)  
+# --> validate the query if it is wrong
+# --> if it is wrong, rebuilt the query such that it works correctly
+# --> if it is right, then move ahead to further deeper analysis  
+
 # Instruction based (give set of instructions)
 # Role based promiting (act as cutomer service)
 
