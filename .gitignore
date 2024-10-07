@@ -1,3 +1,6 @@
 .env
 helper.ipynb
 utils.ipynb
+*.pem
+
+

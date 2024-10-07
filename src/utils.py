@@ -13,9 +13,11 @@ from yaml.loader import SafeLoader
 from dotenv import load_dotenv
 load_dotenv()
 
+# LLM libraries
+from langchain_core.prompts import PromptTemplate
+from langchain.output_parsers import ResponseSchema, StructuredOutputParser
 from langchain.chains.llm import LLMChain
 from langchain_openai import ChatOpenAI
-from langchain_core.prompts import PromptTemplate
 
 
 
@@ -479,3 +481,61 @@ def add_to_user_history(user_name,question,query,favourite_ind):
     query = f"""INSERT INTO {user_history_table} VALUES ('{user_name}',current_timestamp(),'{question}',"{query}",{favourite_ind})"""
     # query = f"SELECT * FROM {user_history_table}"
     df = pd.read_sql(sql=query,con=conn)
+
+
+    # Function to create Quick Analysis questions based on the given schema and tables
+@st.experimental_fragment
+@st.cache_data
+def quick_analysis(table_schema):
+
+    ### Defining the output schema from the LLM        
+    output_schema = ResponseSchema(name="quick_analysis_questions",description="Generated Quick Analysis questions for the given tables list")
+    output_parser = StructuredOutputParser.from_response_schemas([output_schema])
+    format_instructions = output_parser.get_format_instructions()
+
+    ### Defining the prompt template
+    template_string = """
+    Using the provided SCHEMA (delimited by ##), generate the top 5 "quick analysis" questions based on the relationships between the tables which can be answered by creating a Databricks SQL code. 
+    These questions should be practical and insightful, targeting the kind of business inquiries a product manager or analyst would typically investigate daily.    
+
+    SCHEMA:
+    ##
+    {table_schema}
+    ##
+
+    The output should be in a nested JSON format with the following structure:
+    {fomat_instructions}
+     """
+    
+    prompt_template = PromptTemplate.from_template(template_string)
+    
+    ### Defining the LLM chain
+    llm_chain = LLMChain(
+        llm=ChatOpenAI(model="gpt-4o-mini",temperature=0),
+        prompt=prompt_template,
+        output_parser=output_parser
+    )
+
+    response =  llm_chain.invoke({"table_schema":table_schema,"fomat_instructions":format_instructions})
+    # output = response['text']  
+
+    return response
+
+
+
+@st.cache_data
+def load_user_query_history(user_name):
+
+
+    """
+        Function to load the user_query_history table
+
+    """
+    # Getting the sample details of the selected table
+    conn = sql.connect(server_hostname = os.getenv("DATABRICKS_SERVER_HOSTNAME"),
+                    http_path       = os.getenv("DATABRICKS_HTTP_PATH"),
+                    access_token    = os.getenv("DATABRICKS_ACCESS_TOKEN"))
+
+    query = f"SELECT * FROM hive_metastore.dev_tools.querysmart_user_query_history WHERE user_name = '{user_name}' AND timestamp > current_date - 20"
+    df = pd.read_sql(sql=query,con=conn)
+    return df

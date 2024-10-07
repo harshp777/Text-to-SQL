@@ -4,9 +4,9 @@ credentials:
       email: hp@gmail.com
       name: Harsh Pandya
       password: $2b$12$jUVhnl61i1w14j13UKQmxu6.vclg/JZ2KdqsUSqcE5tdNOzmF8AaW #Password:abc123 # To be replaced with hashed password
-    kalp:
-      email: kp@gmail.com
-      name: Kalp Pandya
+    guest:
+      email: guest@gmail.com
+      name: Guest
       password: $2b$12$jUVhnl61i1w14j13UKQmxu6.vclg/JZ2KdqsUSqcE5tdNOzmF8AaW
     
 cookie:
