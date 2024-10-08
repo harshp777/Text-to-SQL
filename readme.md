@@ -2,6 +2,10 @@
 
 QuerySmart is a Streamlit-based web application that allows users to interact with databases using natural language. It leverages the power of Large Language Models (LLMs) like GPT-4, converting natural language queries into optimized SQL commands. The app is designed for non-technical users to easily query data without writing SQL, making database interaction more accessible and boosting productivity.
 
+
+![image](https://github.com/user-attachments/assets/82f4dbf6-2653-4e71-9760-d63432186847)
+
+
 ## Project Overview
 
 In today's data-driven world, accessing and querying databases can be a significant challenge, especially for users without SQL expertise. QuerySmart aims to bridge this gap by enabling natural language to SQL translation, simplifying the process of interacting with relational databases.
