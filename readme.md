@@ -34,15 +34,8 @@ By leveraging GPT-4 and integrating with cloud platforms such as Microsoft Azure
   - `Langchain-openai`
   - `Streamlit`
   - `Databricks`
-- **Model**: GPT-4 via OpenAI API
+- **Model**: GPT-4o mini via OpenAI API
 - **Cloud Platforms**: 
   - Microsoft Azure
   - AWS (EC2 for deployment)
 
-## Installation and Setup
-
-### 1. Clone the repository
-
-```bash
-git clone https://github.com/your-username/QuerySmart.git
-cd QuerySmart
