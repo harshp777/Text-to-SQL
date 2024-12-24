@@ -54,7 +54,7 @@ By leveraging GPT-4 and integrating with cloud platforms such as Microsoft Azure
 **ERD Diagram**
 ![image](https://github.com/user-attachments/assets/f7dc0077-7c56-44a3-a620-143397515f32)
 
-**Select Question(AI Generated) **
+**Select Question(AI Generated)**
 ![image](https://github.com/user-attachments/assets/ad87b52b-d590-42bf-a825-ece0394628de)
 
 **Analyze the Query**
